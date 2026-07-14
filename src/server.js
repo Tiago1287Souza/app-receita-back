@@ -3,9 +3,12 @@ import { ENV } from "./config/env.js";
 import { db } from "./config/db.js";
 import { favoritesTable } from "./db/schema.js";
 import { eq } from "drizzle-orm";
+import job from "./config/cron.js";
 
 const app = express();
 const PORT = ENV.PORT || 5001;
+
+if (ENV.NODE_ENV === "production") jsonb.start();
 
 app.use(express.json());
 
@@ -49,8 +52,8 @@ app.delete("/api/favorites/:userId/:recipeId", async (req, res) => {
       .where(
         and(
           eq(favoritesTable.userId, userId),
-          eq(favoritesTable.recipeId, parseInt(recipeId))
-        )
+          eq(favoritesTable.recipeId, parseInt(recipeId)),
+        ),
       );
     res.status(200).json({ message: "Removido Com susesso" });
   } catch (error) {
